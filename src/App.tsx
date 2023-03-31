@@ -120,7 +120,7 @@ const useAsyncAction = (
   return [status, action] as const;
 };
 
-export const App = () => {
+const App = () => {
   const actualAction = useCallback(
     (): Promise<boolean> =>
       new Promise((r) => setTimeout(() => r(Math.random() > 0.5), 1000)),
@@ -139,3 +139,5 @@ export const App = () => {
     </Container>
   );
 };
+
+export default App;

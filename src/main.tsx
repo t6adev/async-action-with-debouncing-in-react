@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react'
 import { createRoot } from "react-dom/client";
 import { ChakraProvider } from "@chakra-ui/react";
 
 import { theme } from "./theme";
-import { App } from "./App";
+import App from './App'
 
 const element = document.getElementById("root");
 if (!element) {

@@ -1,32 +1,28 @@
 {
+  "name": "async-action-with-debouncing-in-react",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
   "dependencies": {
-    "@chakra-ui/anatomy": "latest",
-    "@chakra-ui/icons": "latest",
-    "@chakra-ui/react": "latest",
-    "@chakra-ui/styled-system": "latest",
-    "@emotion/react": "latest",
-    "@emotion/styled": "latest",
-    "framer-motion": "latest",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-icons": "latest",
-    "react-scripts": "^4.0.0"
+    "@chakra-ui/icons": "^2.0.18",
+    "@chakra-ui/react": "^2.5.5",
+    "@chakra-ui/system": "^2.5.5",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "framer-motion": "^10.10.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "react-scripts": "1.0.0",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
-    "typescript": "^4.0.0"
-  },
-  "main": "/index.tsx",
-  "keywords": [],
-  "name": "async-action-with-debouncing-in-react",
-  "description": "",
-  "version": "0.0.65",
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@vitejs/plugin-react-swc": "^3.0.0",
+    "typescript": "^4.9.3",
+    "vite": "^4.2.0"
   }
 }
