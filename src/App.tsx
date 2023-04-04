@@ -8,7 +8,7 @@ import {
   Text,
   OrderedList,
   ListItem,
-  Spinner
+  Spinner,
 } from "@chakra-ui/react";
 import { CheckIcon, WarningTwoIcon } from "@chakra-ui/icons";
 
@@ -46,34 +46,6 @@ const getRightElement = (mode: string, result?: boolean) => {
   if (mode === "neutral") return null;
 };
 
-const InputWithAsyncAction = ({
-  defaultValue,
-  onAction,
-  mode,
-  result
-}: {
-  defaultValue: string;
-  onAction: (str: string) => void;
-  mode: string;
-  result?: boolean;
-}) => {
-  const [val, setVal] = useState(defaultValue);
-
-  return (
-    <InputGroup>
-      <Input
-        value={val}
-        onChange={(e) => {
-          const input = e.target.value;
-          setVal(input);
-          onAction(input);
-        }}
-      />
-      <InputRightElement children={getRightElement(mode, result)} />
-    </InputGroup>
-  );
-};
-
 type Status = {
   mode: "neutral" | "canceling" | "processing" | "done";
   result?: boolean;
@@ -83,58 +55,75 @@ type TimerRef = {
   timer: ReturnType<typeof setTimeout>;
 };
 
-const useAsyncAction = (
-  actualAction: () => Promise<boolean>,
-  debounce = 2000
-) => {
+const InputWithAsyncAction = ({
+  defaultValue,
+  action,
+  debounce = 1500,
+}: {
+  defaultValue: string;
+  action: (str: string) => Promise<boolean>;
+  debounce: number;
+}) => {
+  const [val, setVal] = useState(defaultValue);
   const [status, setStatus] = useState<Status>({ mode: "neutral" });
   const timerRef = useRef<TimerRef | null>(null);
-  const action = useCallback(
-    (val: string) =>
-      new Promise((r) => {
-        const createdAt = Date.now();
-        if (
-          timerRef.current &&
-          timerRef.current.createdAt + debounce > createdAt
-        ) {
-          clearTimeout(timerRef.current.timer);
-          setStatus({ mode: "canceling" });
-        }
-        if (val) {
-          const timer = setTimeout(async () => {
-            setStatus({ mode: "processing" });
-            const result = await actualAction();
-            console.log(val, result);
-            setStatus({ mode: "done", result });
-            if (result) {
-              setTimeout(() => setStatus({ mode: "neutral" }), 1000);
-            }
-          }, debounce);
-          timerRef.current = { createdAt, timer };
-        } else {
-          setStatus({ mode: "neutral" });
-        }
-      }),
-    [debounce, actualAction]
+
+  return (
+    <InputGroup>
+      <Input
+        value={val}
+        onChange={(e) => {
+          const input = e.target.value;
+          setVal(input);
+          const createdAt = Date.now();
+          if (
+            timerRef.current &&
+            timerRef.current.createdAt + debounce > createdAt
+          ) {
+            clearTimeout(timerRef.current.timer);
+            setStatus({ mode: "canceling" });
+          }
+          if (input) {
+            const timer = setTimeout(async () => {
+              setStatus({ mode: "processing" });
+              const result = await action(input);
+              console.log(input, result);
+              setStatus({ mode: "done", result });
+              if (result) {
+                setTimeout(() => setStatus({ mode: "neutral" }), 1000);
+              }
+            }, debounce);
+            timerRef.current = { createdAt, timer };
+          } else {
+            setStatus({ mode: "neutral" });
+          }
+        }}
+      />
+      <InputRightElement
+        children={getRightElement(status.mode, status.result)}
+      />
+    </InputGroup>
   );
-  return [status, action] as const;
 };
 
 const App = () => {
   const actualAction = useCallback(
-    (): Promise<boolean> =>
-      new Promise((r) => setTimeout(() => r(Math.random() > 0.5), 1000)),
+    (str: string): Promise<boolean> =>
+      new Promise((r) =>
+        setTimeout(() => {
+          console.log(str);
+          r(Math.random() > 0.5);
+        }, 1000)
+      ),
     []
   );
-  const [{ mode, result }, action] = useAsyncAction(actualAction, 1500);
   return (
     <Container py={32}>
       <Description />
       <InputWithAsyncAction
         defaultValue="default value"
-        onAction={action}
-        mode={mode}
-        result={result}
+        action={actualAction}
+        debounce={1500}
       />
     </Container>
   );
